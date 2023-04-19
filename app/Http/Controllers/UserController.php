@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index(int $per_page = 15) {
+    public function index(int $per_page = 15): JsonResponse {
         $users = User::paginate($per_page);
         return response()->json([$users]);
     }
@@ -18,9 +19,7 @@ class UserController extends Controller {
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserStoreRequest $request) {
-
-
+    public function store(UserStoreRequest $request): JsonResponse {
 
         $password = bcrypt($request->input('password'));
         try {
@@ -37,7 +36,7 @@ class UserController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(int $id) {
+    public function show(int $id): JsonResponse {
         $user = User::findOrFail($id);
         return response()->json([$user]);
     }
@@ -45,14 +44,13 @@ class UserController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id) {
+    public function update(Request $request, int $id): JsonResponse {
 
         $request->validate([
             'name' => 'required|max:255',
             'surname' => 'required|max:255',
             'birth_date' => 'required|date',
             'email' => 'required|unique:users',
-            'password' => 'required',
             'fiscal_code' => 'nullable|regex:/^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/i'
         ]);
 
@@ -75,7 +73,7 @@ class UserController extends Controller {
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id) {
+    public function destroy(int $id): JsonResponse {
         try {
             $user = User::findOrFail($id);
             $user->delete();
@@ -85,7 +83,7 @@ class UserController extends Controller {
         }
     }
 
-    private function changePassword(string $password, int $id) {
+    private function changePassword(string $password, int $id): void {
         $user = User::find($id);
         $user->fill(['password' => $password]);
         $user->save();
