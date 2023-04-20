@@ -46,14 +46,6 @@ class UserController extends Controller {
      */
     public function update(Request $request, int $id): JsonResponse {
 
-        $request->validate([
-            'name' => 'required|max:255',
-            'surname' => 'required|max:255',
-            'birth_date' => 'required|date',
-            'email' => 'required|unique:users',
-            'fiscal_code' => 'nullable|regex:/^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/i'
-        ]);
-
         $password = bcrypt($request->input('password'));
         try {
             $user = User::findOrFail($id);
